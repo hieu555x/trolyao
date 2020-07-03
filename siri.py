@@ -90,7 +90,7 @@ while True:
         os.startfile(os.path.join(music_dir, songs[0]))
         os.remove("output.mp3")
         robot_brain = ""
-    elif "tìm kiếm" in you or "Tiềm kiếm" in you:
+    elif "tìm kiếm" in you or "Tìm kiếm" in you:
         print("Robot: Nói cho tôi biết bạn đang tìm kiếm gì")
         robot_brain = gTTS("Nói cho tôi biết bạn đang tìm kiếm gì", lang="vi", slow=False)
         robot_brain.save("output.mp3")
