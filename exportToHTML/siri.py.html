@@ -1,0 +1,226 @@
+<html>
+<head>
+<title>siri.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #000080; font-weight: bold;}
+.s1 { color: #000000;}
+.s2 { color: #808080; font-style: italic;}
+.s3 { color: #008080; font-weight: bold;}
+.s4 { color: #0000ff;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+siri.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span>pyttsx3
+<span class="s0">import </span>speech_recognition
+<span class="s0">from </span>datetime <span class="s0">import </span>date, datetime
+<span class="s0">import </span>wikipedia
+<span class="s0">import </span>os
+<span class="s0">import </span>time
+<span class="s0">import </span>webbrowser
+<span class="s2"># Khởi tạo các biến</span>
+robot_ear = speech_recognition.Recognizer()
+robot_mouth = pyttsx3.init()
+robot_brain = <span class="s3">&quot;&quot;</span>
+<span class="s2"># Đặt tốc độ giọng nói</span>
+robot_mouth.setProperty(<span class="s3">'rate'</span>, <span class="s4">115</span>)
+<span class="s2"># Đặt lời phụ nữ</span>
+voices = robot_mouth.getProperty(<span class="s3">'voices'</span>)
+robot_mouth.setProperty(<span class="s3">'voice'</span>, voices[<span class="s4">1</span>].id)
+<span class="s2"># Phần nghe</span>
+<span class="s0">while True</span>:
+    <span class="s0">with </span>speech_recognition.Microphone() <span class="s0">as </span>mic:
+        print(<span class="s3">&quot;Robot: I'm Listening&quot;</span>)
+        audio = robot_ear.record(mic, duration=<span class="s4">3</span>)
+        robot_ear.adjust_for_ambient_noise(mic)
+
+    print(<span class="s3">&quot;Robot:...&quot;</span>)
+
+    <span class="s0">try</span>:
+        you = robot_ear.recognize_google(audio)
+    <span class="s0">except</span>:
+        you = <span class="s3">&quot;&quot;</span>
+    <span class="s2"># Phần hiểu</span>
+    print(<span class="s3">&quot;You : &quot; </span>+ you)
+
+    <span class="s0">if </span>you == <span class="s3">&quot;hello&quot; </span><span class="s0">or </span>you == <span class="s3">&quot;hi&quot;</span>:
+        robot_mouth.setProperty(<span class="s3">'rate'</span>, <span class="s4">115</span>)
+        now = datetime.now()
+        currentTime = int(now.strftime(<span class="s3">&quot;%H&quot;</span>))
+        <span class="s0">if </span>currentTime &gt; <span class="s4">4 </span><span class="s0">and </span>currentTime &lt;= <span class="s4">10</span>:
+            robot_brain = <span class="s3">&quot;Good Morning, May I help you?&quot;</span>
+        <span class="s0">elif </span>currentTime &gt; <span class="s4">10 </span><span class="s0">and </span>currentTime &lt;=<span class="s4">15</span>:
+            robot_brain = <span class="s3">&quot;Good Afternoon, May I help you?&quot;</span>
+        <span class="s0">else</span>:
+            robot_brain = <span class="s3">&quot;Good Evening, May I help you?&quot;</span>
+    <span class="s0">elif </span>you == <span class="s3">&quot;&quot;</span>:
+        robot_brain = <span class="s3">&quot;I can't hear you, please try again&quot;</span>
+    <span class="s0">elif </span><span class="s3">&quot;today&quot; </span><span class="s0">in </span>you:
+        today = date.today()
+        robot_brain = today.strftime(<span class="s3">&quot;%B, %d, %Y&quot;</span>)
+    <span class="s0">elif </span><span class="s3">&quot;time&quot; </span><span class="s0">in </span>you:
+        now = datetime.now()
+        robot_brain = now.strftime(<span class="s3">&quot;%H hours %M minutes %S seconds&quot;</span>)
+    <span class="s0">elif </span><span class="s3">&quot;bye&quot; </span><span class="s0">in </span>you <span class="s0">or </span><span class="s3">&quot;end&quot; </span><span class="s0">in </span>you:
+        robot_brain = <span class="s3">&quot;Good bye, Have a good day&quot;</span>
+        print(<span class="s3">&quot;Robot: &quot; </span>+ robot_brain)
+        robot_mouth.say(robot_brain)
+        robot_mouth.runAndWait()
+        <span class="s0">break</span>
+    <span class="s0">elif </span><span class="s3">&quot;american&quot; </span><span class="s0">in </span>you <span class="s0">or </span><span class="s3">&quot;president&quot; </span><span class="s0">in </span>you:
+        robot_brain = <span class="s3">&quot;Searching, please wait...&quot;</span>
+        print(<span class="s3">&quot;Robot: &quot; </span>+ robot_brain)
+        robot_mouth.say(robot_brain)
+        robot_mouth.runAndWait()
+        robot_brain = wikipedia.summary(<span class="s3">&quot;Donald Trump&quot;</span>, sentences=<span class="s4">2</span>)
+    <span class="s0">elif </span><span class="s3">&quot;app&quot; </span><span class="s0">in </span>you <span class="s0">and </span><span class="s3">&quot;open&quot; </span><span class="s0">in </span>you:
+        robot_brain = <span class="s3">&quot;&quot;</span>
+        print(<span class="s3">&quot;Robot: Openning, please wait...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Openning, please wait...&quot;</span>)
+        os.startfile(<span class="s3">'C:</span><span class="s0">\\</span><span class="s3">Users\SPADER\Desktop\Coc Coc.lnk'</span>)
+    <span class="s0">elif </span><span class="s3">&quot;open&quot; </span><span class="s0">in </span>you <span class="s0">and </span><span class="s3">&quot;music&quot; </span><span class="s0">in </span>you:
+        robot_brain = <span class="s3">&quot;&quot;</span>
+        print(<span class="s3">&quot;Robot: Openning, please wait...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Openning, please wait...&quot;</span>)
+        music_dir = <span class="s3">'C:</span><span class="s0">\\</span><span class="s3">Users\SPADER\Downloads\Music'          </span><span class="s2"># thư mục để nhạc</span>
+        songs = os.listdir(music_dir)
+        os.startfile(os.path.join(music_dir, songs[<span class="s4">0</span>]))
+    <span class="s0">elif </span><span class="s3">&quot;search&quot; </span><span class="s0">in </span>you <span class="s0">or </span><span class="s3">&quot;Wikipedia&quot; </span><span class="s0">in </span>you:
+        print(<span class="s3">&quot;Robot: What are you looking for?&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;What are you looking for&quot;</span>)
+        robot_mouth.runAndWait()
+        <span class="s0">with </span>speech_recognition.Microphone() <span class="s0">as </span>mic:
+            print(<span class="s3">&quot;Robot: I'm Listening&quot;</span>)
+            audio = robot_ear.record(mic, duration=<span class="s4">3</span>)
+            robot_ear.adjust_for_ambient_noise(mic)
+
+        print(<span class="s3">&quot;Robot:...&quot;</span>)
+
+        <span class="s0">try</span>:
+            you = robot_ear.recognize_google(audio)
+        <span class="s0">except</span>:
+            you = <span class="s3">&quot;&quot;</span>
+
+        print(<span class="s3">&quot;You : &quot; </span>+ you)
+        robot_brain = <span class="s3">&quot;Searching, please wait...&quot;</span>
+        print(<span class="s3">&quot;Robot: &quot; </span>+ robot_brain)
+        robot_mouth.say(robot_brain)
+        robot_mouth.runAndWait()
+        <span class="s0">try</span>:
+            robot_brain = wikipedia.summary(you, sentences=<span class="s4">2</span>)
+        <span class="s0">except</span>:
+            print(<span class="s3">&quot;Robot:Not Found&quot;</span>)
+            robot_mouth.say(<span class="s3">&quot;Not Found&quot;</span>)
+            robot_mouth.runAndWait()
+            robot_brain = <span class="s3">&quot;&quot;</span>
+    <span class="s0">elif </span><span class="s3">&quot;Wait&quot; </span><span class="s0">in </span>you:
+        print(<span class="s3">&quot;Robot:I'm waitting...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;I'm waitting&quot;</span>)
+        robot_mouth.runAndWait()
+        time.sleep(<span class="s4">20</span>)
+    <span class="s0">elif </span><span class="s3">&quot;facebook&quot; </span><span class="s0">in </span>you <span class="s0">or </span><span class="s3">&quot;Facebook&quot; </span><span class="s0">in </span>you:
+        print(<span class="s3">&quot;Robot: Openning, please wait...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Openning, please wait...&quot;</span>)
+        robot_mouth.runAndWait()
+        webbrowser.open(<span class="s3">&quot;https://www.facebook.com/&quot;</span>)
+        <span class="s0">break</span>
+    <span class="s0">elif </span><span class="s3">&quot;Translate&quot; </span><span class="s0">in </span>you:
+        print(<span class="s3">&quot;Robot: What is your keyword to translate?&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;What is your keyword to translate&quot;</span>)
+        robot_mouth.runAndWait()
+        <span class="s0">with </span>speech_recognition.Microphone() <span class="s0">as </span>mic:
+            print(<span class="s3">&quot;Robot: I'm Listening&quot;</span>)
+            audio = robot_ear.record(mic, duration=<span class="s4">5</span>)
+            robot_ear.adjust_for_ambient_noise(mic)
+
+        print(<span class="s3">&quot;Robot...&quot;</span>)
+
+        <span class="s0">try</span>:
+            you = robot_ear.recognize_google(audio)
+        <span class="s0">except</span>:
+            you = <span class="s3">&quot;&quot;</span>
+        print(<span class="s3">&quot;You:&quot; </span>+ you)
+        print(<span class="s3">&quot;Robot: Translating, please wait...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Translating, please wait&quot;</span>)
+        robot_mouth.runAndWait()
+        Str = <span class="s3">&quot;&quot;</span>
+        <span class="s0">for </span>i <span class="s0">in </span>range(<span class="s4">0</span>,len(you.split(<span class="s3">&quot; &quot;</span>))):
+            Str = Str + you.split(<span class="s3">&quot; &quot;</span>)[i] + <span class="s3">&quot;%20&quot;</span>
+        print(<span class="s3">&quot;Robot: Result in translate.google.com&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Result in translate.google.com&quot;</span>)
+        robot_mouth.runAndWait()
+        webbrowser.open(<span class="s3">&quot;https://translate.google.com/?hl=vi#view=home&amp;op=translate&amp;sl=auto&amp;tl=vi&amp;text=&quot;</span>+Str)
+        <span class="s0">break</span>
+    <span class="s0">elif </span><span class="s3">&quot;Song&quot; </span><span class="s0">in </span>you <span class="s0">or </span><span class="s3">&quot;song&quot; </span><span class="s0">in </span>you:
+        print(<span class="s3">&quot;Robot: What is your name of song to seach?&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;What is your name of song to seach&quot;</span>)
+        robot_mouth.runAndWait()
+        <span class="s0">with </span>speech_recognition.Microphone() <span class="s0">as </span>mic:
+            print(<span class="s3">&quot;Robot: I'm Listening&quot;</span>)
+            audio = robot_ear.record(mic, duration=<span class="s4">5</span>)
+            robot_ear.adjust_for_ambient_noise(mic)
+
+        print(<span class="s3">&quot;Robot...&quot;</span>)
+
+        <span class="s0">try</span>:
+            you = robot_ear.recognize_google(audio)
+        <span class="s0">except</span>:
+            you = <span class="s3">&quot;&quot;</span>
+        print(<span class="s3">&quot;You:&quot; </span>+ you)
+        print(<span class="s3">&quot;Robot: Searching, please wait...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Searching, please wait&quot;</span>)
+        robot_mouth.runAndWait()
+        Str = <span class="s3">&quot;&quot;</span>
+        <span class="s0">for </span>i <span class="s0">in </span>range(<span class="s4">0</span>, len(you.split(<span class="s3">&quot; &quot;</span>))):
+            Str = Str + you.split(<span class="s3">&quot; &quot;</span>)[i] + <span class="s3">&quot;+&quot;</span>
+        print(<span class="s3">&quot;Robot: Result in zing mp3.com&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Result in zing mp3.com&quot;</span>)
+        robot_mouth.runAndWait()
+        webbrowser.open(<span class="s3">&quot;https://zingmp3.vn/tim-kiem/bai-hat.html?q=&quot; </span>+ Str)
+        <span class="s0">break</span>
+    <span class="s0">elif </span><span class="s3">&quot;YouTube&quot; </span><span class="s0">in </span>you <span class="s0">or </span><span class="s3">&quot;youtube&quot; </span><span class="s0">in </span>you:
+        print(<span class="s3">&quot;Robot: What is your name of video to seach?&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;What is your name of video to seach&quot;</span>)
+        robot_mouth.runAndWait()
+        <span class="s0">with </span>speech_recognition.Microphone() <span class="s0">as </span>mic:
+            print(<span class="s3">&quot;Robot: I'm Listening&quot;</span>)
+            audio = robot_ear.record(mic, duration=<span class="s4">5</span>)
+            robot_ear.adjust_for_ambient_noise(mic)
+
+        print(<span class="s3">&quot;Robot...&quot;</span>)
+
+        <span class="s0">try</span>:
+            you = robot_ear.recognize_google(audio)
+        <span class="s0">except</span>:
+            you = <span class="s3">&quot;&quot;</span>
+        print(<span class="s3">&quot;You:&quot; </span>+ you)
+        print(<span class="s3">&quot;Robot: Searching, please wait...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Searching, please wait&quot;</span>)
+        robot_mouth.runAndWait()
+        Str = <span class="s3">&quot;&quot;</span>
+        <span class="s0">for </span>i <span class="s0">in </span>range(<span class="s4">0</span>, len(you.split(<span class="s3">&quot; &quot;</span>))):
+            Str = Str + you.split(<span class="s3">&quot; &quot;</span>)[i] + <span class="s3">&quot;+&quot;</span>
+        print(<span class="s3">&quot;Robot: Result in youtube.com&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Result in youtube.com&quot;</span>)
+        robot_mouth.runAndWait()
+        webbrowser.open(<span class="s3">&quot;https://www.youtube.com/results?search_query=&quot; </span>+ Str)
+        <span class="s0">break</span>
+    <span class="s0">elif </span><span class="s3">&quot;mail&quot; </span><span class="s0">in </span>you <span class="s0">or </span><span class="s3">&quot;Mail&quot; </span><span class="s0">in </span>you:
+        print(<span class="s3">&quot;Robot:Openning, please wait...&quot;</span>)
+        robot_mouth.say(<span class="s3">&quot;Openning, please wait...&quot;</span>)
+        robot_mouth.runAndWait()
+        webbrowser.open(<span class="s3">&quot;https://mail.google.com/&quot;</span>)
+        <span class="s0">break</span>
+    <span class="s0">else</span>:
+         robot_brain = <span class="s3">&quot;I'm not understand, please try again&quot;</span>
+
+    print(<span class="s3">&quot;Robot: &quot; </span>+ robot_brain)
+    robot_mouth.say(robot_brain)
+    robot_mouth.runAndWait()</pre>
+</body>
+</html>
